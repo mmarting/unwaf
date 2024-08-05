@@ -1,7 +1,9 @@
 
 # Unwaf
 
-Unwaf is a Go tool designed to help identify potential WAF bypass using passive techniques, such as: DNS history and SPF records.
+Unwaf is a Go tool designed to help identify WAF bypasses using passive techniques, such as: SPF records and DNS history. By default, Unwaf will check SPF records. If you want it to check DNS history records, setup ViewDNS and/or SecurityTrails in Unwaf config file ($HOME/.unwaf.conf).
+
+Unwaf is automating the steps I explained on this LinkedIn Post: [Passive WAF bypassing](https://www.linkedin.com/posts/martinmarting_bugbounty-bugbountytips-pentesting-activity-7217385665729093632-oZEP)
 
 ## Installation
 
