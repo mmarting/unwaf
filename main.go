@@ -401,7 +401,7 @@ func processDomain(domain, source, configPath string) {
 	fmt.Printf("  Total unique IPs found: %d.\n\n", len(uniqueIPs))
 
 	if len(uniqueIPs) == 0 {
-		fmt.Println(color.New(color.Bold, color.FgRed).Sprint("WAF bypass not found."))
+		fmt.Println(color.New(color.Bold, color.FgRed).Sprint("\nWAF bypass not found."))
 		return
 	}
 
