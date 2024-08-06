@@ -441,7 +441,7 @@ func processDomain(domain, source, configPath string) {
 
 	if len(bypassIPs) > 0 {
 		for _, ip := range bypassIPs {
-			fmt.Printf("\n%s", color.New(color.Bold, color.FgGreen).Sprintf("\nPossible WAF bypass detected. Web server seem to be directly accessible using the IP: %s", ip))
+			fmt.Printf("\n%s", color.New(color.Bold, color.FgGreen).Sprintf("\nPossible WAF bypass detected. Web server seems to be directly accessible using the IP: %s", ip))
 		}
 	} else {
 		fmt.Println(color.New(color.Bold, color.FgRed).Sprint("\nWAF bypass not found."))
