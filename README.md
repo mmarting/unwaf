@@ -46,7 +46,7 @@ Check a domain with a manually provided HTML file:
 unwaf --domain example.com --source original.html
 ```
 
-Check a domain with a config file:
+Check a domain with a custom location for the config file:
 
 ```sh
 unwaf --domain example.com --config /path/to/config
