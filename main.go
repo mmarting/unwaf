@@ -55,7 +55,7 @@ Examples:
      unwaf -d example.com -c /path/to/config
 
 Note:
-  Unwaf requires API keys for viewdns & securitytrails in order to be able to check DNS history records. Check GitHub for more information. 
+  Unwaf requires API keys for viewdns & securitytrails in order to be able to check DNS history records. Add them to the config file: $HOME/.unwaf.conf 
 `
 
 type Config struct {
