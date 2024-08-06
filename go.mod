@@ -1,4 +1,4 @@
-module unwaf
+module github.com/mmarting/unwaf
 
 go 1.22.5
 
