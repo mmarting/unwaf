@@ -63,7 +63,7 @@ type Config struct {
 	SecurityTrails string `json:"securitytrails"`
 }
 
-var apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+var apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
 
 func showUsage() {
 	fmt.Println(logo)
