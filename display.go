@@ -36,6 +36,7 @@ Usage:
   --scan-neighbors    Scan /24 neighbors of confirmed bypass IPs (optional)
   --json              Output results as JSON
   -l, --list          File containing domains to check, one per line
+  -sb, --subdomains   File containing custom subdomains to probe
   -o, --output        Write results to file
   --version           Print version and exit
   -h, --help          Display help information
@@ -67,6 +68,9 @@ Examples:
 
   9. Scan /24 neighbors of bypass IPs:
      unwaf -d example.com --scan-neighbors
+
+  10. Use custom subdomains for discovery:
+      unwaf -d example.com -sb custom_subs.txt
 
 Discovery methods:
   [FREE]    SPF records (ip4/ip6 mechanisms)

@@ -98,6 +98,7 @@ unwaf -h
 | | `--scan-neighbors` | Scan /24 neighbors of confirmed bypass IPs | `false` |
 | | `--json` | Output results as JSON | `false` |
 | `-l` | `--list` | File containing domains to check, one per line | — |
+| `-sb` | `--subdomains` | File containing custom subdomains to probe | — |
 | `-o` | `--output` | Write results to file | — |
 | | `--version` | Print version and exit | — |
 | `-h` | `--help` | Display help information | — |

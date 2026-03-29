@@ -51,6 +51,8 @@ func main() {
 	flag.StringVar(listFile, "l", "", "File containing domains (shorthand)")
 	outputFile := flag.String("output", "", "Write results to file")
 	flag.StringVar(outputFile, "o", "", "Write results to file (shorthand)")
+	subdomainFile := flag.String("subdomains", "", "File containing custom subdomains to probe")
+	flag.StringVar(subdomainFile, "sb", "", "File containing custom subdomains (shorthand)")
 
 	flag.Parse()
 
@@ -134,6 +136,7 @@ func main() {
 		jsonMode:      *jsonOutput,
 		outputFile:    *outputFile,
 		portTimeout:   portTimeout,
+		subdomainFile: *subdomainFile,
 	}
 
 	if *jsonOutput && len(domains) > 1 {
@@ -187,6 +190,7 @@ type processOptions struct {
 	jsonMode      bool
 	outputFile    string
 	portTimeout   time.Duration
+	subdomainFile string
 }
 
 type discoveryStep struct {
@@ -339,7 +343,7 @@ func processDomain(ctx context.Context, domain string, opts *processOptions) *JS
 			return extractIPsFromMX(mainDomain)
 		}},
 		{name: "Subdomain", label: "Common Origin Subdomains", enabled: true, run: func() ([]string, error) {
-			return extractIPsFromSubdomains(ctx, mainDomain, opts.verbose), nil
+			return extractIPsFromSubdomains(ctx, mainDomain, opts.subdomainFile, opts.verbose), nil
 		}},
 		{name: "CT/crt.sh", label: "Certificate Transparency (crt.sh)", enabled: true, run: func() ([]string, error) {
 			return extractIPsFromCrtSh(ctx, mainDomain, opts.verbose)
