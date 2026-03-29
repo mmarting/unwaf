@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 
@@ -88,19 +89,71 @@ func extractIPsFromMX(domain string) ([]string, error) {
 // Discovery: Common subdomains
 // ---------------------------------------------------------------------------
 
-func extractIPsFromSubdomains(ctx context.Context, domain string, verbose bool) []string {
+func extractIPsFromSubdomains(ctx context.Context, domain string, customFile string, verbose bool) []string {
 	var ips []string
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 
-	for _, sub := range originSubdomains {
+	subs := append([]string{}, originSubdomains...)
+	if customFile != "" {
+		f, err := os.Open(customFile)
+		if err != nil {
+			logWarn("Error opening custom subdomains file: %v", err)
+		} else {
+			defer f.Close()
+			scanner := bufio.NewScanner(f)
+			count := 0
+			for scanner.Scan() {
+				line := strings.TrimSpace(scanner.Text())
+				if line != "" && !strings.HasPrefix(line, "#") {
+					subs = append(subs, line)
+					count++
+				}
+			}
+			if err := scanner.Err(); err != nil {
+				logWarn("Error reading custom subdomains file: %v", err)
+			}
+			if count > 0 {
+				logInfo("Loaded %d custom subdomains from %s.", count, customFile)
+			}
+		}
+	}
+
+	// Deduplicate
+	subMap := make(map[string]bool)
+	var finalSubs []string
+	for _, s := range subs {
+		if !subMap[s] {
+			subMap[s] = true
+			finalSubs = append(finalSubs, s)
+		}
+	}
+
+	for _, sub := range finalSubs {
 		wg.Add(1)
 		go func(subdomain string) {
 			defer wg.Done()
 			if ctx.Err() != nil {
 				return
 			}
-			fqdn := subdomain + "." + domain
+
+			fqdn := subdomain
+			// If it looks like a URL, extract host
+			if strings.Contains(fqdn, "://") {
+				if parts := strings.Split(fqdn, "://"); len(parts) > 1 {
+					fqdn = parts[1]
+				}
+			}
+			// Remove path/port if present
+			if idx := strings.IndexAny(fqdn, "/:"); idx != -1 {
+				fqdn = fqdn[:idx]
+			}
+
+			// If it doesn't contain the main domain, append it
+			if !strings.HasSuffix(fqdn, "."+domain) && fqdn != domain {
+				fqdn = fqdn + "." + domain
+			}
+
 			addrs, err := net.LookupHost(fqdn)
 			if err != nil {
 				return
