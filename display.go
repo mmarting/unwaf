@@ -36,6 +36,7 @@ Usage:
   --scan-neighbors    Scan /24 neighbors of confirmed bypass IPs (optional)
   --json              Output results as JSON
   -l, --list          File containing domains to check, one per line
+  -I, --ip-list       File containing custom IPs to check, one per line
   -o, --output        Write results to file
   --version           Print version and exit
   -h, --help          Display help information
@@ -68,6 +69,9 @@ Examples:
   9. Scan /24 neighbors of bypass IPs:
      unwaf -d example.com --scan-neighbors
 
+  10. Use a custom IP list for checking:
+      unwaf -d example.com -I ips.txt
+
 Discovery methods:
   [FREE]    SPF records (ip4/ip6 mechanisms)
   [FREE]    MX records (mail server IPs)
@@ -79,6 +83,7 @@ Discovery methods:
   [FREE]    RapidDNS subdomain enumeration
   [FREE]    HackerTarget host search
   [FREE]    Wayback Machine archived URLs
+  [FREE]    Custom IP list (manually provided)
   [API free] Shodan host search (free API key, by SSL cert/hostname/favicon)
   [API free] SecurityTrails DNS history (free tier, 50 req/month)
   [API paid] ViewDNS IP history

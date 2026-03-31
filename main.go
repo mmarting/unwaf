@@ -51,6 +51,8 @@ func main() {
 	flag.StringVar(listFile, "l", "", "File containing domains (shorthand)")
 	outputFile := flag.String("output", "", "Write results to file")
 	flag.StringVar(outputFile, "o", "", "Write results to file (shorthand)")
+	ipListFile := flag.String("ip-list", "", "File containing custom IPs to check, one per line")
+	flag.StringVar(ipListFile, "I", "", "File containing custom IPs (shorthand)")
 
 	flag.Parse()
 
@@ -119,6 +121,28 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Collect custom IPs
+	var customIPs []string
+	if *ipListFile != "" {
+		f, err := os.Open(*ipListFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error opening IP list file: %v\n", err)
+			os.Exit(1)
+		}
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			// Basic IP validation
+			if ip := net.ParseIP(line); ip != nil {
+				customIPs = append(customIPs, line)
+			}
+		}
+		f.Close()
+	}
+
 	portTimeout := timeout / 5
 	if portTimeout < 2*time.Second {
 		portTimeout = 2 * time.Second
@@ -134,6 +158,7 @@ func main() {
 		jsonMode:      *jsonOutput,
 		outputFile:    *outputFile,
 		portTimeout:   portTimeout,
+		customIPs:     customIPs,
 	}
 
 	if *jsonOutput && len(domains) > 1 {
@@ -187,6 +212,7 @@ type processOptions struct {
 	jsonMode      bool
 	outputFile    string
 	portTimeout   time.Duration
+	customIPs     []string
 }
 
 type discoveryStep struct {
@@ -328,6 +354,11 @@ func processDomain(ctx context.Context, domain string, opts *processOptions) *JS
 		}
 		allIPs = append(allIPs, ips...)
 		jsonOut.Sources[source] = len(ips)
+	}
+
+	// Add custom IPs first if provided
+	if len(opts.customIPs) > 0 {
+		addIPs("Custom IP List", opts.customIPs)
 	}
 
 	// Build dynamic discovery steps
